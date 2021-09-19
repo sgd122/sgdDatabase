@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  mysql:
+    image: mariadb:5.5
+    volumes:
+      - "./db/mysql:/var/lib/mysql:rw"
+    environment:
+      - "MYSQL_DATABASE=docker"
+      - "MYSQL_USER=admin"
+      - "MYSQL_PASSWORD=admin"
+      - "MYSQL_ROOT_PASSWORD=root"
+    ports:
+      - "3306:3306"
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    volumes:
+      - "./db/mssql:/var/opt/mssql:rw"
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "SA_PASSWORD=admin"
+    ports:
+      - "1433:1433"
