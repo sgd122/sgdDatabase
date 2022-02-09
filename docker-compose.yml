@@ -2,7 +2,8 @@ version: "3"
 
 services:
   mysql:
-    image: mariadb:5.5
+    platform: linux/x86_64 # 추가된 라인
+    image: library/mysql:5.7
     volumes:
       - "./db/mysql:/var/lib/mysql:rw"
     environment:
@@ -12,16 +13,18 @@ services:
       - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     ports:
       - "3306:3306"
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    volumes:
-      - "./db/mssql:/var/opt/mssql:rw"
-    environment:
-      - "ACCEPT_EULA=Y"
-      - "SA_PASSWORD=${SA_PASSWORD}"
-    ports:
-      - "1433:1433"
+  # mssql:
+  #   platform: linux/x86_64 # 추가된 라인
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   volumes:
+  #     - "./db/mssql:/var/opt/mssql:rw"
+  #   environment:
+  #     - "ACCEPT_EULA=Y"
+  #     - "SA_PASSWORD=${SA_PASSWORD}"
+  #   ports:
+  #     - "1433:1433"
   postgres:
+    platform: linux/x86_64 # 추가된 라인
     image: postgres:latest
     restart: always
     environment:
@@ -34,3 +37,21 @@ services:
       - ./db/db/postgres-init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     ports:
       - 5432:5432
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    volumes:
+      - ./db/mongodb:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      ME_CONFIG_MONGODB_URL: "${ME_CONFIG_MONGODB_URL}"
